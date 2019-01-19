@@ -114,4 +114,10 @@ function checkLabelActivated(store, label) {
   return (store.positiveTags.indexOf(label) >= 0);
 }
 
-module.exports = new Codetags();
+const singleton = new Codetags();
+
+singleton.newInstance = function(opts) {
+  return new Codetags(opts);
+}
+
+module.exports = singleton;
