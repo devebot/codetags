@@ -9,6 +9,23 @@ var codetags = require('../lib/codetags');
 describe('codetags', function() {
   before(function() {
   });
+  describe('namespace', function() {
+    before(function() {
+      codetags.initialize({ namespace: 'DEVEBOT' });
+    })
+    beforeEach(function() {
+      envmask.setup({
+        DEVEBOT_UPGRADE_ENABLED: "abc, def, xyz",
+        DEVEBOT_UPGRADE_DISABLED: "disabled",
+      })
+      codetags.reset();
+    })
+    it('customized namespace is used to retrieve values of environment variables', function() {
+      assert.isTrue(codetags.isEnabled('abc'));
+      assert.isFalse(codetags.isEnabled('disabled'));
+      assert.isFalse(codetags.isEnabled('nil'));
+    })
+  });
   describe('isEnabled()', function() {
     beforeEach(function() {
       envmask.setup({

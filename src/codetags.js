@@ -5,6 +5,12 @@ const nodash = require('./nodash');
 function Codetags() {
   const store = { env: {}, activeTags: [] };
 
+  this.initialize = function(cfg = {}) {
+    if (nodash.isString(cfg.namespace)) {
+      store.namespace = cfg.namespace;
+    }
+  }
+
   this.isEnabled = function(label) {
     if (!store.positiveTags) {
       store.positiveTags = getEnv(store, 'UPGRADE_ENABLED');
