@@ -7,9 +7,9 @@ var codetags = require('../lib/codetags');
 describe('codetags', function() {
   before(function() {
   });
-  describe('namespace', function() {
+  describe('initialize()', function() {
     before(function() {
-      codetags.initialize({
+      codetags.reset().initialize({
         namespace: 'Devebot',
         POSITIVE_TAGS: 'UPGRADE_ENABLED',
         NEGATIVE_TAGS: 'UPGRADE_DISABLED',
@@ -20,7 +20,7 @@ describe('codetags', function() {
         DEVEBOT_UPGRADE_ENABLED: "abc, def, xyz",
         DEVEBOT_UPGRADE_DISABLED: "disabled",
       })
-      codetags.reset();
+      codetags.clearCache();
     })
     it('customized namespace is used to retrieve values of environment variables', function() {
       assert.isTrue(codetags.isEnabled('abc'));
@@ -29,12 +29,15 @@ describe('codetags', function() {
     })
   });
   describe('isEnabled()', function() {
+    before(function() {
+      codetags.reset();
+    })
     beforeEach(function() {
       envmask.setup({
         CODETAGS_POSITIVE_TAGS: "abc, def, xyz",
         CODETAGS_NEGATIVE_TAGS: "disabled",
       })
-      codetags.reset();
+      codetags.clearCache();
     })
     it('An arguments-list presents the OR conditional operator', function() {
       assert.isTrue(codetags.isEnabled('abc'));
@@ -57,9 +60,9 @@ describe('codetags', function() {
       assert.isFalse(codetags.isEnabled(['abc', 'def', 'disabled']));
       assert.isFalse(codetags.isEnabled(['abc', '123'], ['def', '456']));
     })
-    after(function() {
-      envmask.reset();
-      codetags.reset();
-    })
+  });
+  after(function() {
+    envmask.reset();
+    codetags.reset();
   });
 });

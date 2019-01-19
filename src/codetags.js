@@ -4,7 +4,7 @@ const nodash = require('./nodash');
 
 function Codetags() {
   const store = { env: {}, activeTags: [] };
-  const setting = { POSITIVE_TAGS: 'POSITIVE_TAGS', NEGATIVE_TAGS: 'NEGATIVE_TAGS' };
+  const setting = {};
 
   this.initialize = function(cfg = {}) {
     ['namespace', 'POSITIVE_TAGS', 'NEGATIVE_TAGS'].forEach(function(attr) {
@@ -17,10 +17,10 @@ function Codetags() {
 
   this.isEnabled = function() {
     if (!store.positiveTags) {
-      store.positiveTags = getEnv(store, setting.namespace, setting.POSITIVE_TAGS);
+      store.positiveTags = getEnv(store, setting.namespace, getLabel(setting, 'POSITIVE_TAGS'));
     }
     if (!store.negativeTags) {
-      store.negativeTags = getEnv(store, setting.namespace, setting.NEGATIVE_TAGS);
+      store.negativeTags = getEnv(store, setting.namespace, getLabel(setting, 'NEGATIVE_TAGS'));
     }
     return isAnyOfTuplesSatistied(store, arguments);
   }
@@ -41,11 +41,20 @@ function Codetags() {
     return this;
   }
 
-  this.reset = function() {
+  this.clearCache = function() {
     store.negativeTags = null;
     store.positiveTags = null;
     for(const envName in store.env) {
       delete store.env[envName];
+    }
+    return this;
+  }
+
+  this.reset = function() {
+    this.clearCache();
+    store.activeTags.length = 0;
+    for(const attr in setting) {
+      delete setting[attr];
     }
     return this;
   }
@@ -60,6 +69,10 @@ function getEnv(store, namespace, label, defaultValue) {
   }
   store.env[label] = nodash.stringToArray(store.env[label]);
   return store.env[label];
+}
+
+function getLabel(labels, label) {
+  return labels[label] || label;
 }
 
 function getValue(namespace, name) {
