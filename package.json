@@ -1,0 +1,36 @@
+{
+  "name": "codetags",
+  "version": "0.1.0",
+  "description": "A simple feature toggle utility",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib/"
+  },
+  "scripts": {
+    "build": "babel ./src -d ./lib",
+    "clean": "rm -rf ./lib",
+    "prepublish": "npm run clean && NODE_ENV=${CODETAGS_NODE_ENV:-production} npm run build",
+    "pretest": "npm run clean && NODE_ENV=${CODETAGS_NODE_ENV:-test} npm run build",
+    "test": "mocha --recursive test/**/*-test.js",
+    "verify": "npm run prepublish && mocha --recursive test/**/*-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devebot/codetags.git"
+  },
+  "keywords": [
+    "devebot",
+    "feature",
+    "toggles"
+  ],
+  "author": "devebot",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-minify-mangle-names": "^0.3.0",
+    "babel-preset-env": "^1.6.1",
+    "chai": "^4.2.0",
+    "envmask": "^0.1.1",
+    "mocha": "^5.2.0"
+  }
+}

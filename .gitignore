@@ -1,0 +1,7 @@
+node_modules
+/doc
+/lib
+.cache
+.idea
+.store
+*.log
