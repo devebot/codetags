@@ -30,12 +30,28 @@ describe('codetags', function() {
   });
   describe('isEnabled()', function() {
     before(function() {
-      codetags.reset();
+      codetags.reset().register([
+        {
+          name: "tag-1"
+        },
+        {
+          label: "tag-2",
+          enabled: true,
+        },
+        {
+          tag: "tag-3",
+          enabled: false,
+        },
+        {
+          name: "tag-4",
+          enabled: false,
+        }
+      ]);
     })
     beforeEach(function() {
       envmask.setup({
-        CODETAGS_POSITIVE_TAGS: "abc, def, xyz",
-        CODETAGS_NEGATIVE_TAGS: "disabled",
+        CODETAGS_POSITIVE_TAGS: "abc, def, xyz, tag-4",
+        CODETAGS_NEGATIVE_TAGS: "disabled, tag-2",
       })
       codetags.clearCache();
     })
@@ -59,6 +75,18 @@ describe('codetags', function() {
       assert.isFalse(codetags.isEnabled(['abc', 'def', 'nil']));
       assert.isFalse(codetags.isEnabled(['abc', 'def', 'disabled']));
       assert.isFalse(codetags.isEnabled(['abc', '123'], ['def', '456']));
+    })
+    it('pre-defined tags are overridden by values of environment variables', function() {
+      assert.isTrue(codetags.isEnabled('abc'));
+      assert.isTrue(codetags.isEnabled('tag-1'));
+      assert.isTrue(codetags.isEnabled('abc', 'tag-1'));
+      assert.isTrue(codetags.isEnabled('disabled', 'tag-1'));
+      assert.isTrue(codetags.isEnabled('tag-4'));
+      assert.isFalse(codetags.isEnabled('tag-2'));
+      assert.isFalse(codetags.isEnabled('tag-3'));
+      assert.isFalse(codetags.isEnabled(['nil', 'tag-1']));
+      assert.isFalse(codetags.isEnabled('nil', 'tag-3'));
+      assert.isFalse(codetags.isEnabled('tag-3', 'disabled'));
     })
   });
   after(function() {

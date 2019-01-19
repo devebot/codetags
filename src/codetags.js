@@ -26,18 +26,7 @@ function Codetags() {
   }
 
   this.register = function(descriptors) {
-    if (nodash.isArray(descriptors)) {
-      const tags = descriptors.filter(function(def) {
-        return def.enabled !== false;
-      }).map(function(def) {
-        return def.tag || def.name || def.label;
-      });
-      tags.forEach(function(tag) {
-        if (store.activeTags.indexOf(tag) < 0) {
-          store.activeTags.push(tag);
-        }
-      });
-    }
+    addDescriptors(store.activeTags, descriptors);
     return this;
   }
 
@@ -58,6 +47,22 @@ function Codetags() {
     }
     return this;
   }
+}
+
+function addDescriptors(activeTags, descriptors) {
+  if (nodash.isArray(descriptors)) {
+    const tags = descriptors.filter(function(def) {
+      return def.enabled !== false;
+    }).map(function(def) {
+      return def.tag || def.name || def.label;
+    });
+    tags.forEach(function(tag) {
+      if (activeTags.indexOf(tag) < 0) {
+        activeTags.push(tag);
+      }
+    });
+  }
+  return activeTags;
 }
 
 function getEnv(store, namespace, label, defaultValue) {
