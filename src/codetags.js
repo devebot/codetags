@@ -15,7 +15,7 @@ function Codetags() {
     return this;
   }
 
-  this.isEnabled = function() {
+  this.isActive = function() {
     if (!store.positiveTags) {
       store.positiveTags = getEnv(store, setting.namespace, getLabel(setting, 'POSITIVE_TAGS'));
     }

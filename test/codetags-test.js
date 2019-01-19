@@ -23,12 +23,12 @@ describe('codetags', function() {
       codetags.clearCache();
     })
     it('customized namespace is used to retrieve values of environment variables', function() {
-      assert.isTrue(codetags.isEnabled('abc'));
-      assert.isFalse(codetags.isEnabled('disabled'));
-      assert.isFalse(codetags.isEnabled('nil'));
+      assert.isTrue(codetags.isActive('abc'));
+      assert.isFalse(codetags.isActive('disabled'));
+      assert.isFalse(codetags.isActive('nil'));
     })
   });
-  describe('isEnabled()', function() {
+  describe('isActive()', function() {
     before(function() {
       codetags.reset().register([
         {
@@ -56,37 +56,37 @@ describe('codetags', function() {
       codetags.clearCache();
     })
     it('An arguments-list presents the OR conditional operator', function() {
-      assert.isTrue(codetags.isEnabled('abc'));
-      assert.isTrue(codetags.isEnabled('abc', 'xyz'));
-      assert.isTrue(codetags.isEnabled('abc', 'disabled'));
-      assert.isTrue(codetags.isEnabled('disabled', 'abc'));
-      assert.isTrue(codetags.isEnabled('abc', 'nil'));
-      assert.isTrue(codetags.isEnabled('undefined', 'abc', 'nil'));
-      assert.isFalse(codetags.isEnabled());
-      assert.isFalse(codetags.isEnabled('disabled'));
-      assert.isFalse(codetags.isEnabled('nil'));
-      assert.isFalse(codetags.isEnabled('nil', 'disabled'));
-      assert.isFalse(codetags.isEnabled('nil', 'disabled', 'abc.xyz'));
+      assert.isTrue(codetags.isActive('abc'));
+      assert.isTrue(codetags.isActive('abc', 'xyz'));
+      assert.isTrue(codetags.isActive('abc', 'disabled'));
+      assert.isTrue(codetags.isActive('disabled', 'abc'));
+      assert.isTrue(codetags.isActive('abc', 'nil'));
+      assert.isTrue(codetags.isActive('undefined', 'abc', 'nil'));
+      assert.isFalse(codetags.isActive());
+      assert.isFalse(codetags.isActive('disabled'));
+      assert.isFalse(codetags.isActive('nil'));
+      assert.isFalse(codetags.isActive('nil', 'disabled'));
+      assert.isFalse(codetags.isActive('nil', 'disabled', 'abc.xyz'));
     })
     it('An array argument presents the AND conditional operator', function() {
-      assert.isTrue(codetags.isEnabled(['abc', 'xyz'], 'nil'));
-      assert.isTrue(codetags.isEnabled(['abc', 'xyz'], null));
-      assert.isFalse(codetags.isEnabled(['abc', 'nil']));
-      assert.isFalse(codetags.isEnabled(['abc', 'def', 'nil']));
-      assert.isFalse(codetags.isEnabled(['abc', 'def', 'disabled']));
-      assert.isFalse(codetags.isEnabled(['abc', '123'], ['def', '456']));
+      assert.isTrue(codetags.isActive(['abc', 'xyz'], 'nil'));
+      assert.isTrue(codetags.isActive(['abc', 'xyz'], null));
+      assert.isFalse(codetags.isActive(['abc', 'nil']));
+      assert.isFalse(codetags.isActive(['abc', 'def', 'nil']));
+      assert.isFalse(codetags.isActive(['abc', 'def', 'disabled']));
+      assert.isFalse(codetags.isActive(['abc', '123'], ['def', '456']));
     })
     it('pre-defined tags are overridden by values of environment variables', function() {
-      assert.isTrue(codetags.isEnabled('abc'));
-      assert.isTrue(codetags.isEnabled('tag-1'));
-      assert.isTrue(codetags.isEnabled('abc', 'tag-1'));
-      assert.isTrue(codetags.isEnabled('disabled', 'tag-1'));
-      assert.isTrue(codetags.isEnabled('tag-4'));
-      assert.isFalse(codetags.isEnabled('tag-2'));
-      assert.isFalse(codetags.isEnabled('tag-3'));
-      assert.isFalse(codetags.isEnabled(['nil', 'tag-1']));
-      assert.isFalse(codetags.isEnabled('nil', 'tag-3'));
-      assert.isFalse(codetags.isEnabled('tag-3', 'disabled'));
+      assert.isTrue(codetags.isActive('abc'));
+      assert.isTrue(codetags.isActive('tag-1'));
+      assert.isTrue(codetags.isActive('abc', 'tag-1'));
+      assert.isTrue(codetags.isActive('disabled', 'tag-1'));
+      assert.isTrue(codetags.isActive('tag-4'));
+      assert.isFalse(codetags.isActive('tag-2'));
+      assert.isFalse(codetags.isActive('tag-3'));
+      assert.isFalse(codetags.isActive(['nil', 'tag-1']));
+      assert.isFalse(codetags.isActive('nil', 'tag-3'));
+      assert.isFalse(codetags.isActive('tag-3', 'disabled'));
     })
   });
   after(function() {
