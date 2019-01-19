@@ -4,20 +4,23 @@ const nodash = require('./nodash');
 
 function Codetags() {
   const store = { env: {}, activeTags: [] };
-  const labelOf = { POSITIVE_TAGS: 'UPGRADE_ENABLED', NEGATIVE_TAGS: 'UPGRADE_DISABLED' };
+  const setting = { POSITIVE_TAGS: 'POSITIVE_TAGS', NEGATIVE_TAGS: 'NEGATIVE_TAGS' };
 
   this.initialize = function(cfg = {}) {
-    if (nodash.isString(cfg.namespace)) {
-      store.namespace = cfg.namespace.toUpperCase();
-    }
+    ['namespace', 'POSITIVE_TAGS', 'NEGATIVE_TAGS'].forEach(function(attr) {
+      if (nodash.isString(cfg[attr])) {
+        setting[attr] = cfg[attr].toUpperCase();
+      }
+    });
+    return this;
   }
 
-  this.isEnabled = function(label) {
+  this.isEnabled = function() {
     if (!store.positiveTags) {
-      store.positiveTags = getEnv(store, labelOf.POSITIVE_TAGS);
+      store.positiveTags = getEnv(store, setting.namespace, setting.POSITIVE_TAGS);
     }
     if (!store.negativeTags) {
-      store.negativeTags = getEnv(store, labelOf.NEGATIVE_TAGS);
+      store.negativeTags = getEnv(store, setting.namespace, setting.NEGATIVE_TAGS);
     }
     return isAnyOfTuplesSatistied(store, arguments);
   }
@@ -27,7 +30,7 @@ function Codetags() {
       const tags = descriptors.filter(function(def) {
         return def.enabled !== false;
       }).map(function(def) {
-        return def.tag;
+        return def.tag || def.name || def.label;
       });
       tags.forEach(function(tag) {
         if (store.activeTags.indexOf(tag) < 0) {
@@ -41,14 +44,17 @@ function Codetags() {
   this.reset = function() {
     store.negativeTags = null;
     store.positiveTags = null;
+    for(const envName in store.env) {
+      delete store.env[envName];
+    }
     return this;
   }
 }
 
-function getEnv(store, label, defaultValue) {
+function getEnv(store, namespace, label, defaultValue) {
   if (label in store.env) return store.env[label];
   if (!nodash.isString(label)) return undefined;
-  store.env[label] = getValue(store.namespace, label);
+  store.env[label] = getValue(namespace, label);
   if (!store.env[label]) {
     store.env[label] = store.env[label] || defaultValue;
   }
@@ -77,14 +83,14 @@ function isAllOfLabelsSatisfied(store, labels) {
   if (!labels) return false;
   if (nodash.isArray(labels)) {
     for(const k in labels) {
-      if (!checkUpgradeSupported(store, labels[k])) return false;
+      if (!checkLabelActivated(store, labels[k])) return false;
     }
     return true;
   }
-  return checkUpgradeSupported(store, labels);
+  return checkLabelActivated(store, labels);
 }
 
-function checkUpgradeSupported(store, label) {
+function checkLabelActivated(store, label) {
   if (store.negativeTags.indexOf(label) >= 0) return false;
   if (store.activeTags.indexOf(label) >= 0) return true;
   return (store.positiveTags.indexOf(label) >= 0);
