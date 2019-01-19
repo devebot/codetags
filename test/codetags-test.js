@@ -1,8 +1,6 @@
 'use strict';
 
 var assert = require('chai').assert;
-var path = require('path');
-var util = require('util');
 var envmask = require('envmask').instance;
 var codetags = require('../lib/codetags');
 
@@ -11,7 +9,7 @@ describe('codetags', function() {
   });
   describe('namespace', function() {
     before(function() {
-      codetags.initialize({ namespace: 'DEVEBOT' });
+      codetags.initialize({ namespace: 'Devebot' });
     })
     beforeEach(function() {
       envmask.setup({

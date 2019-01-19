@@ -4,19 +4,20 @@ const nodash = require('./nodash');
 
 function Codetags() {
   const store = { env: {}, activeTags: [] };
+  const labelOf = { POSITIVE_TAGS: 'UPGRADE_ENABLED', NEGATIVE_TAGS: 'UPGRADE_DISABLED' };
 
   this.initialize = function(cfg = {}) {
     if (nodash.isString(cfg.namespace)) {
-      store.namespace = cfg.namespace;
+      store.namespace = cfg.namespace.toUpperCase();
     }
   }
 
   this.isEnabled = function(label) {
     if (!store.positiveTags) {
-      store.positiveTags = getEnv(store, 'UPGRADE_ENABLED');
+      store.positiveTags = getEnv(store, labelOf.POSITIVE_TAGS);
     }
     if (!store.negativeTags) {
-      store.negativeTags = getEnv(store, 'UPGRADE_DISABLED');
+      store.negativeTags = getEnv(store, labelOf.NEGATIVE_TAGS);
     }
     return isAnyOfTuplesSatistied(store, arguments);
   }
