@@ -68,10 +68,7 @@ function addDescriptors(activeTags, descriptors) {
 function getEnv(store, namespace, label, defaultValue) {
   if (label in store.env) return store.env[label];
   if (!nodash.isString(label)) return undefined;
-  store.env[label] = getValue(namespace, label);
-  if (!store.env[label]) {
-    store.env[label] = store.env[label] || defaultValue;
-  }
+  store.env[label] = getValue(namespace, label) || defaultValue;;
   store.env[label] = nodash.stringToArray(store.env[label]);
   return store.env[label];
 }
