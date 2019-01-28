@@ -9,7 +9,7 @@ function Codetags(args) {
   this.initialize = function(cfg = {}) {
     ['namespace', 'POSITIVE_TAGS', 'NEGATIVE_TAGS'].forEach(function(attr) {
       if (nodash.isString(cfg[attr])) {
-        setting[attr] = cfg[attr].toUpperCase();
+        setting[attr] = nodash.labelify(cfg[attr]);
       }
     });
     return this;

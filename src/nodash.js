@@ -39,6 +39,11 @@ function Nodash() {
     return labels;
   }
 
+  this.labelify = function(str) {
+    if (!this.isString(str)) return str;
+    return str.toUpperCase().replace(/\W{1,}/g, '_');
+  };
+
   this.union = function() {
     
   }
