@@ -1,6 +1,6 @@
 {
   "name": "codetags",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple feature toggle utility",
   "main": "index.js",
   "directories": {
@@ -31,6 +31,7 @@
     "babel-preset-env": "^1.6.1",
     "chai": "^4.2.0",
     "envmask": "^0.1.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "rewire": "^4.0.1"
   }
 }

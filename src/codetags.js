@@ -2,7 +2,7 @@
 
 const nodash = require('./nodash');
 
-function Codetags() {
+function Codetags(args) {
   const store = { env: {}, activeTags: [] };
   const setting = {};
 
@@ -47,15 +47,20 @@ function Codetags() {
     }
     return this;
   }
+
+  this.initialize(args);
 }
 
 function addDescriptors(activeTags, descriptors) {
   if (nodash.isArray(descriptors)) {
-    const tags = descriptors.filter(function(def) {
-      return def.enabled !== false;
-    }).map(function(def) {
-      return def.tag || def.name || def.label;
-    });
+    const tags = descriptors
+      .filter(function(def) {
+        return def !== undefined && def !== null && def.enabled !== false;
+      })
+      .map(function(def) {
+        if (nodash.isString(def)) return def;
+        return def.tag || def.name || def.label;
+      });
     tags.forEach(function(tag) {
       if (activeTags.indexOf(tag) < 0) {
         activeTags.push(tag);
@@ -113,8 +118,18 @@ function checkLabelActivated(store, label) {
 
 const singleton = new Codetags();
 
-singleton.newInstance = function(opts) {
-  return new Codetags(opts);
+const BRANCH_REF = {};
+
+singleton.createBranch = function(name, opts = {}) {
+  if (!nodash.isString(name)) {
+    throw new Error('name of codetags branch must be a string');
+  }
+  opts.namespace = opts.namespace || name;
+  return BRANCH_REF[name] = new Codetags(opts);
+}
+
+singleton.assertBranch = function(name, opts) {
+  return BRANCH_REF[name] = BRANCH_REF[name] || this.createBranch(name, opts);
 }
 
 module.exports = singleton;

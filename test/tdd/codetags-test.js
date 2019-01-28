@@ -2,11 +2,10 @@
 
 var assert = require('chai').assert;
 var envmask = require('envmask').instance;
-var codetags = require('../lib/codetags');
+var codetags = require('../../lib/codetags');
 
 describe('codetags', function() {
-  before(function() {
-  });
+
   describe('initialize()', function() {
     before(function() {
       codetags.reset().initialize({
@@ -28,6 +27,7 @@ describe('codetags', function() {
       assert.isFalse(codetags.isActive('nil'));
     })
   });
+
   describe('isActive()', function() {
     before(function() {
       codetags.reset().register([
@@ -87,8 +87,9 @@ describe('codetags', function() {
       assert.isFalse(codetags.isActive(['nil', 'tag-1']));
       assert.isFalse(codetags.isActive('nil', 'tag-3'));
       assert.isFalse(codetags.isActive('tag-3', 'disabled'));
-    })
+    });
   });
+
   after(function() {
     envmask.reset();
     codetags.reset();
