@@ -4,6 +4,7 @@
   "description": "A simple feature toggle utility",
   "main": "index.js",
   "directories": {
+    "docs": "docs/",
     "lib": "lib/"
   },
   "scripts": {

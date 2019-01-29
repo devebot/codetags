@@ -2,9 +2,13 @@
 
 > A simple feature toggle utility
 
-## What is this?
+## What is `codetags`?
 
 `codetags` is a simple feature toggle utility for javascript/nodejs. Developers could use this library to prepare new features and switch the features by using environment variables.
+
+## How does it work?
+
+![Architecture](https://raw.github.com/devebot/codetags/master/docs/assets/images/codetags-architecture.png)
 
 ## Examples
 
