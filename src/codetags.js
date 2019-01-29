@@ -22,7 +22,7 @@ function Codetags(args) {
     if (!store.negativeTags) {
       store.negativeTags = getEnv(store, setting.namespace, getLabel(setting, 'NEGATIVE_TAGS'));
     }
-    return isAnyOfTuplesSatistied(store, arguments);
+    return isArgumentsSatisfied(store, arguments);
   }
 
   this.register = function(descriptors) {
@@ -92,22 +92,64 @@ function getValue(namespace, name) {
   return process.env['CODETAGS' + '_' + name];
 }
 
-function isAnyOfTuplesSatistied(store, tuples) {
+function isArgumentsSatisfied(store, tuples) {
   for(const i in tuples) {
-    if (isAllOfLabelsSatisfied(store, tuples[i])) return true;
+    if (evaluateExpression(store, tuples[i])) return true;
   }
   return false;
 }
 
-function isAllOfLabelsSatisfied(store, labels) {
-  if (!labels) return false;
-  if (nodash.isArray(labels)) {
-    for(const k in labels) {
-      if (!checkLabelActivated(store, labels[k])) return false;
+function evaluateExpression(store, exp) {
+  if (nodash.isArray(exp)) {
+    return isAllOfLabelsSatisfied(store, exp);
+  }
+  if (nodash.isObject(exp)) {
+    for(const op in exp) {
+      switch(op) {
+        case '$and': {
+          if (isAllOfLabelsSatisfied(store, exp[op]) === false) return false;
+          break;
+        }
+        case '$or': {
+          if (isAnyOfLabelsSatisfied(store, exp[op]) === false) return false;
+          break;
+        }
+        case '$not': {
+          if (isNotOfLabelsSatisfied(store, exp[op]) === false) return false;
+          break;
+        }
+        default: {
+          return false;
+        }
+      }
     }
     return true;
   }
-  return checkLabelActivated(store, labels);
+  return checkLabelActivated(store, exp);
+}
+
+function isNotOfLabelsSatisfied(store, labels) {
+  return !evaluateExpression(store, labels);
+}
+
+function isAnyOfLabelsSatisfied(store, labels) {
+  if (nodash.isArray(labels)) {
+    for(const k in labels) {
+      if (evaluateExpression(store, labels[k])) return true;
+    }
+    return false;
+  }
+  return evaluateExpression(store, labels);
+}
+
+function isAllOfLabelsSatisfied(store, labels) {
+  if (nodash.isArray(labels)) {
+    for(const k in labels) {
+      if (!evaluateExpression(store, labels[k])) return false;
+    }
+    return true;
+  }
+  return evaluateExpression(store, labels);
 }
 
 function checkLabelActivated(store, label) {
