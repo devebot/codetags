@@ -3,7 +3,7 @@
 const nodash = require('./nodash');
 
 function Codetags(args) {
-  const store = { env: {}, activeTags: [] };
+  const store = { env: {}, activeTags: [], cachedTags: {} };
   const setting = {};
 
   this.initialize = function(cfg = {}) {
@@ -31,6 +31,9 @@ function Codetags(args) {
   }
 
   this.clearCache = function() {
+    for(const tagName in store.cachedTags) {
+      delete store.cachedTags[tagName];
+    }
     store.negativeTags = null;
     store.positiveTags = null;
     for(const envName in store.env) {
@@ -155,6 +158,13 @@ function isAllOfLabelsSatisfied(store, labels) {
 }
 
 function checkLabelActivated(store, label) {
+  if (label in store.cachedTags) {
+    return store.cachedTags[label];
+  }
+  return (store.cachedTags[label] = forceCheckLabelActivated(store, label));
+}
+
+function forceCheckLabelActivated(store, label) {
   if (store.negativeTags.indexOf(label) >= 0) return false;
   if (store.activeTags.indexOf(label) >= 0) return true;
   return (store.positiveTags.indexOf(label) >= 0);

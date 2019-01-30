@@ -122,34 +122,56 @@ Method `isActive` will evaluate an expression of tags (named `tagexp`) based on 
 Syntax:
 
 ```javascript
-codetags.isActive('tagexp-is-a-string');
+const tagexp = 'tagexp-is-a-string';
+if (codetags.isActive(tagexp)) {
+  // do something
+}
 ```
+
+Function call `codetags.isActive(tagexp)` returns `true` when:
+
+* `negativeTags` does not contain `tagexp-is-a-string`;
+* at least one of `positiveTags` and `defaultTags` contains `tagexp-is-a-string`.
 
 ### `tagexp` is an array of sub-tagexps
 
 Syntax:
 
 ```javascript
-codetags.isActive([tagexp1, tagexp2, tagexp3]);
+const tagexp = [subtagexp_1, subtagexp_2, subtagexp_3];
+if (codetags.isActive(tagexp)) {
+  // do something
+}
 ```
+
+Function call `codetags.isActive(tagexp)` returns `true` if all of sub-tagexp in the array must satisfy the function `codetags.isActive` (i.e. `codetags.isActive(subtagexp_i))` return `true` for any `i` from `1` to `3`).
 
 ### `tagexp` is a conditional expression
 
 Syntax:
 
 ```javascript
-codetags.isActive({
+const tagexp = {
   $all: [
     {
-      $not: tagexp0,
-      $any: [ tagexp1, tagexp2, tagexp3 ]
+      $not: subtagexp_0,
+      $any: [ subtagexp_1, subtagexp_2, subtagexp_3 ]
     },
     {
-      $any: [ tagexp4, tagexp5 ]
+      $any: [ subtagexp_4, subtagexp_5 ]
     }
   ]
-});
+};
+if (codetags.isActive(tagexp)) {
+  // do something
+}
 ```
+
+Function call `codetags.isActive(tagexp)` returns `true` if the sub-tagexps are satisfied the following constraints:
+
+* `codetags.isActive(subtagexp_0)` returns `false`;
+* one of `codetags.isActive(subtagexp_i)` returns `true` (with `i` from `1` to `3`);
+* one of `codetags.isActive(subtagexp_j)` returns `true` (with `j` is `4` or `5`);
 
 ### `arguments` is a sequence of tagexps
 
@@ -158,6 +180,8 @@ Syntax:
 ```javascript
 codetags.isActive(tagexp1, tagexp2, tagexp3);
 ```
+
+The above function call will return `true` if there is at least one of arguments satisfies the function `codetags.isActive`.
 
 ## Examples
 
@@ -278,3 +302,9 @@ export MY_MISSION_POSITIVE_TAGS=replace-console-log-with-winston
 export MY_PASSION_NEGATIVE_TAGS=foo,bar
 node index.js
 ```
+
+## License
+
+MIT
+
+See [LICENSE](LICENSE) to see the full text.
