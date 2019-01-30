@@ -63,6 +63,8 @@ describe('codetags', function() {
       assert.isTrue(codetags.isActive('abc', 'nil'));
       assert.isTrue(codetags.isActive('undefined', 'abc', 'nil'));
       assert.isFalse(codetags.isActive());
+      assert.isFalse(codetags.isActive(null));
+      assert.isFalse(codetags.isActive(null, undefined));
       assert.isFalse(codetags.isActive('disabled'));
       assert.isFalse(codetags.isActive('nil'));
       assert.isFalse(codetags.isActive('nil', 'disabled'));

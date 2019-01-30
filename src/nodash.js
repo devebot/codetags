@@ -43,10 +43,6 @@ function Nodash() {
     if (!this.isString(str)) return str;
     return str.toUpperCase().replace(/\W{1,}/g, '_');
   };
-
-  this.union = function() {
-    
-  }
 }
 
 module.exports = new Nodash();
