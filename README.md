@@ -113,9 +113,9 @@ Start node program:
 node index.js
 ```
 
-## Conditional expressions
+## Tags filter expressions
 
-Method `isActive` will evaluate an expression of tags (named `tagexp`) based on collections of tags to determine whether it is accepted or denied. An expression of tags is composed by tags (in string format), array and hashmap structures and conditional operators (`$and`, `$or`, `$not`).
+Method `isActive` will evaluate an expression of tags (named `tagexp`) based on collections of tags to determine whether it is accepted or denied. An expression of tags is composed by tags (in string format), array and hashmap structures and conditional operators (`$all`, `$any`, `$not`).
 
 ### `tagexp` is a single string
 
@@ -139,13 +139,13 @@ Syntax:
 
 ```javascript
 codetags.isActive({
-  $and: [
+  $all: [
     {
       $not: tagexp0,
-      $or: [ tagexp1, tagexp2, tagexp3 ]
+      $any: [ tagexp1, tagexp2, tagexp3 ]
     },
     {
-      $or: [ tagexp4, tagexp5 ]
+      $any: [ tagexp4, tagexp5 ]
     }
   ]
 });

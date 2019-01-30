@@ -106,10 +106,12 @@ function evaluateExpression(store, exp) {
   if (nodash.isObject(exp)) {
     for(const op in exp) {
       switch(op) {
+        case '$all':
         case '$and': {
           if (isAllOfLabelsSatisfied(store, exp[op]) === false) return false;
           break;
         }
+        case '$any':
         case '$or': {
           if (isAnyOfLabelsSatisfied(store, exp[op]) === false) return false;
           break;
