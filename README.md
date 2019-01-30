@@ -115,7 +115,7 @@ node index.js
 
 ## Conditional expressions
 
-Method `isActive` will evaluate an expression of tags based on collections of tags to determine whether it is accepted or denied. An expression of tags is composed by tags (in string format), array and hashmap structures and conditional operators (`$and`, `$or`, `$not`).
+Method `isActive` will evaluate an expression of tags (named `tagexp`) based on collections of tags to determine whether it is accepted or denied. An expression of tags is composed by tags (in string format), array and hashmap structures and conditional operators (`$and`, `$or`, `$not`).
 
 ### `tagexp` is a single string
 
@@ -125,7 +125,7 @@ Syntax:
 codetags.isActive('tagexp-is-a-string');
 ```
 
-### `tagexp` is an array of tagexps
+### `tagexp` is an array of sub-tagexps
 
 Syntax:
 
@@ -151,7 +151,7 @@ codetags.isActive({
 });
 ```
 
-### `arguments` is a sequence of `tagexp`s
+### `arguments` is a sequence of tagexps
 
 Syntax:
 
