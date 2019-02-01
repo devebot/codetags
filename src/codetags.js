@@ -26,7 +26,7 @@ function Codetags(args) {
   }
 
   this.register = function(descriptors) {
-    addDescriptors(store.activeTags, descriptors);
+    addDescriptors(store, descriptors);
     return this;
   }
 
@@ -54,7 +54,7 @@ function Codetags(args) {
   this.initialize(args);
 }
 
-function addDescriptors(activeTags, descriptors) {
+function addDescriptors({activeTags}, descriptors) {
   if (nodash.isArray(descriptors)) {
     const tags = descriptors
       .filter(function(def) {
