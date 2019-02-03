@@ -1,5 +1,7 @@
 'use strict';
 
+const semver = require('semver');
+
 function Nodash() {
 
   this.arrayify = function (val) {
@@ -9,6 +11,10 @@ function Nodash() {
 
   this.isArray = function(a) {
     return a instanceof Array;
+  }
+
+  this.isBoolean = function(b) {
+    return typeof(b) === 'boolean';
   }
 
   this.isFunction = function(f) {
@@ -42,7 +48,12 @@ function Nodash() {
   this.labelify = function(str) {
     if (!this.isString(str)) return str;
     return str.toUpperCase().replace(/\W{1,}/g, '_');
-  };
+  }
+
+  this.isVersionLessThan = function (version1, version2) {
+    if (!semver.valid(version1) || !semver.valid(version2)) return null;
+    return semver.lt(version1, version2);
+  }
 }
 
 module.exports = new Nodash();

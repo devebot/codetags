@@ -7,7 +7,7 @@ function Codetags(args) {
   const setting = {};
 
   this.initialize = function(cfg = {}) {
-    ['namespace', 'POSITIVE_TAGS', 'NEGATIVE_TAGS'].forEach(function(attr) {
+    ['namespace', 'POSITIVE_TAGS', 'NEGATIVE_TAGS', 'version'].forEach(function(attr) {
       if (nodash.isString(cfg[attr])) {
         setting[attr] = nodash.labelify(cfg[attr]);
       }
@@ -26,7 +26,7 @@ function Codetags(args) {
   }
 
   this.register = function(descriptors) {
-    addDescriptors(store, descriptors);
+    addDescriptors(setting, store, descriptors);
     return this;
   }
 
@@ -54,23 +54,33 @@ function Codetags(args) {
   this.initialize(args);
 }
 
-function addDescriptors({activeTags}, descriptors) {
+function addDescriptors(setting, store, descriptors) {
   if (nodash.isArray(descriptors)) {
     const tags = descriptors
       .filter(function(def) {
-        return def !== undefined && def !== null && def.enabled !== false;
+        if (def === undefined || def === null) return false;
+        const plan = def.plan;
+        if (plan && nodash.isString(plan.from) && nodash.isBoolean(plan.enabled)) {
+          if (setting && nodash.isString(setting.version)) {
+            if (nodash.isVersionLessThan(plan.from, setting.version)) {
+              return plan.enabled;
+            }
+          }
+        }
+        if (def.enabled === false) return false;
+        return true;
       })
       .map(function(def) {
         if (nodash.isString(def)) return def;
         return def.tag || def.name || def.label;
       });
     tags.forEach(function(tag) {
-      if (activeTags.indexOf(tag) < 0) {
-        activeTags.push(tag);
+      if (store.activeTags.indexOf(tag) < 0) {
+        store.activeTags.push(tag);
       }
     });
   }
-  return activeTags;
+  return store.activeTags;
 }
 
 function getEnv(store, namespace, label, defaultValue) {
