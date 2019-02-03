@@ -4,12 +4,12 @@ const nodash = require('./nodash');
 
 function Codetags(args) {
   const store = { env: {}, activeTags: [], cachedTags: {} };
-  const setting = {};
+  const presets = {};
 
   this.initialize = function(cfg = {}) {
     ['namespace', 'POSITIVE_TAGS', 'NEGATIVE_TAGS', 'version'].forEach(function(attr) {
       if (nodash.isString(cfg[attr])) {
-        setting[attr] = nodash.labelify(cfg[attr]);
+        presets[attr] = nodash.labelify(cfg[attr]);
       }
     });
     return this;
@@ -17,16 +17,16 @@ function Codetags(args) {
 
   this.isActive = function() {
     if (!store.positiveTags) {
-      store.positiveTags = getEnv(store, setting.namespace, getLabel(setting, 'POSITIVE_TAGS'));
+      store.positiveTags = getEnv(store, presets.namespace, getLabel(presets, 'POSITIVE_TAGS'));
     }
     if (!store.negativeTags) {
-      store.negativeTags = getEnv(store, setting.namespace, getLabel(setting, 'NEGATIVE_TAGS'));
+      store.negativeTags = getEnv(store, presets.namespace, getLabel(presets, 'NEGATIVE_TAGS'));
     }
     return isArgumentsSatisfied(store, arguments);
   }
 
   this.register = function(descriptors) {
-    addDescriptors(setting, store, descriptors);
+    addDescriptors(presets, store, descriptors);
     return this;
   }
 
@@ -45,8 +45,8 @@ function Codetags(args) {
   this.reset = function() {
     this.clearCache();
     store.activeTags.length = 0;
-    for(const attr in setting) {
-      delete setting[attr];
+    for(const attr in presets) {
+      delete presets[attr];
     }
     return this;
   }
@@ -54,15 +54,15 @@ function Codetags(args) {
   this.initialize(args);
 }
 
-function addDescriptors(setting, store, descriptors) {
+function addDescriptors(presets, store, descriptors) {
   if (nodash.isArray(descriptors)) {
     const tags = descriptors
       .filter(function(def) {
         if (def === undefined || def === null) return false;
         const plan = def.plan;
         if (plan && nodash.isString(plan.from) && nodash.isBoolean(plan.enabled)) {
-          if (setting && nodash.isString(setting.version)) {
-            if (nodash.isVersionLessThan(plan.from, setting.version)) {
+          if (presets && nodash.isString(presets.version)) {
+            if (nodash.isVersionLessThan(plan.from, presets.version)) {
               return plan.enabled;
             }
           }
