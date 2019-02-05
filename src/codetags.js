@@ -1,5 +1,6 @@
 'use strict';
 
+const semver = require('semver');
 const nodash = require('./nodash');
 
 function Codetags(args) {
@@ -60,10 +61,29 @@ function addDescriptors(presets, store, descriptors) {
       .filter(function(def) {
         if (def === undefined || def === null) return false;
         const plan = def.plan;
-        if (plan && nodash.isString(plan.from) && nodash.isBoolean(plan.enabled)) {
-          if (presets && nodash.isString(presets.version)) {
-            if (nodash.isVersionLessThan(plan.from, presets.version)) {
+        if (plan && nodash.isBoolean(plan.enabled) && isVersionValid(presets.version)) {
+          let validated = true;
+          let satisfied = true;
+          const minBound = plan.from;
+          if (nodash.isString(minBound)) {
+            validated = validated && isVersionValid(minBound);
+            if (validated) {
+              satisfied = satisfied && isVersionLTE(minBound, presets.version);
+            }
+          }
+          const maxBound = plan.to;
+          if (nodash.isString(maxBound)) {
+            validated = validated && isVersionValid(maxBound);
+            if (validated) {
+              satisfied = satisfied && isVersionLT(presets.version, maxBound);
+            }
+          }
+          if (validated) {
+            if (satisfied) {
               return plan.enabled;
+            } else {
+              if (nodash.isBoolean(def.enabled)) return def.enabled;
+              return !plan.enabled;
             }
           }
         }
@@ -81,6 +101,18 @@ function addDescriptors(presets, store, descriptors) {
     });
   }
   return store.activeTags;
+}
+
+function isVersionValid(version) {
+  return semver.valid(version);
+}
+
+function isVersionLTE(version1, version2) {
+  return semver.lte(version1, version2);
+}
+
+function isVersionLT(version1, version2) {
+  return semver.lt(version1, version2);
 }
 
 function getEnv(store, namespace, label, defaultValue) {
