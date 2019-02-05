@@ -3,14 +3,21 @@
 const semver = require('semver');
 const nodash = require('./nodash');
 
+const DEFAULT_NAMESPACE = 'CODETAGS';
+
 function Codetags(args) {
   const store = { env: {}, activeTags: [], cachedTags: {} };
   const presets = {};
 
   this.initialize = function(cfg = {}) {
-    ['namespace', 'POSITIVE_TAGS', 'NEGATIVE_TAGS', 'version'].forEach(function(attr) {
+    ['namespace', 'POSITIVE_TAGS', 'NEGATIVE_TAGS'].forEach(function(attr) {
       if (nodash.isString(cfg[attr])) {
         presets[attr] = nodash.labelify(cfg[attr]);
+      }
+    });
+    ['version'].forEach(function(attr) {
+      if (nodash.isString(cfg[attr])) {
+        presets[attr] = cfg[attr];
       }
     });
     return this;
@@ -64,14 +71,14 @@ function addDescriptors(presets, store, descriptors) {
         if (plan && nodash.isBoolean(plan.enabled) && isVersionValid(presets.version)) {
           let validated = true;
           let satisfied = true;
-          const minBound = plan.from;
+          const minBound = plan.minBound || plan.from || plan.begin;
           if (nodash.isString(minBound)) {
             validated = validated && isVersionValid(minBound);
             if (validated) {
               satisfied = satisfied && isVersionLTE(minBound, presets.version);
             }
           }
-          const maxBound = plan.to;
+          const maxBound = plan.maxBound || plan.to || plan.end;
           if (nodash.isString(maxBound)) {
             validated = validated && isVersionValid(maxBound);
             if (validated) {
@@ -134,7 +141,7 @@ function getValue(namespace, name) {
       return process.env[longname];
     }
   }
-  return process.env['CODETAGS' + '_' + name];
+  return process.env[DEFAULT_NAMESPACE + '_' + name];
 }
 
 function isArgumentsSatisfied(store, tuples) {
@@ -212,20 +219,24 @@ function forceCheckLabelActivated(store, label) {
   return (store.positiveTags.indexOf(label) >= 0);
 }
 
-const singleton = new Codetags();
-
 const BRANCH_REF = {};
 
-singleton.createBranch = function(name, opts = {}) {
+const singleton = BRANCH_REF[DEFAULT_NAMESPACE] = new Codetags();
+
+singleton.createSpace = function(name, opts = {}) {
   if (!nodash.isString(name)) {
-    throw new Error('name of codetags branch must be a string');
+    throw new Error('name of a codetags space must be a string');
+  }
+  name = nodash.labelify(name);
+  if (name === DEFAULT_NAMESPACE) {
+    throw new Error(DEFAULT_NAMESPACE + ' is default space name. Please provides another name.');
   }
   opts.namespace = opts.namespace || name;
   return BRANCH_REF[name] = new Codetags(opts);
 }
 
-singleton.assertBranch = function(name, opts) {
-  return BRANCH_REF[name] = BRANCH_REF[name] || this.createBranch(name, opts);
+singleton.assertSpace = function(name, opts) {
+  return BRANCH_REF[name] = BRANCH_REF[name] || this.createSpace(name, opts);
 }
 
 module.exports = singleton;
