@@ -10,7 +10,11 @@ function Codetags(args) {
   const presets = {};
 
   this.initialize = function(cfg = {}) {
-    ['namespace', 'POSITIVE_TAGS', 'NEGATIVE_TAGS'].forEach(function(attr) {
+    [
+      'namespace',
+      'positiveTagsLabel', 'POSITIVE_TAGS_LABEL', 'POSITIVE_TAGS',
+      'negativeTagsLabel', 'NEGATIVE_TAGS_LABEL', 'NEGATIVE_TAGS',
+    ].forEach(function(attr) {
       if (nodash.isString(cfg[attr])) {
         presets[attr] = nodash.labelify(cfg[attr]);
       }
@@ -25,10 +29,10 @@ function Codetags(args) {
 
   this.isActive = function() {
     if (!store.positiveTags) {
-      store.positiveTags = getEnv(store, presets.namespace, getLabel(presets, 'POSITIVE_TAGS'));
+      store.positiveTags = getEnv(store, presets.namespace, getLabel(presets, 'positiveTags'));
     }
     if (!store.negativeTags) {
-      store.negativeTags = getEnv(store, presets.namespace, getLabel(presets, 'NEGATIVE_TAGS'));
+      store.negativeTags = getEnv(store, presets.namespace, getLabel(presets, 'negativeTags'));
     }
     return isArgumentsSatisfied(store, arguments);
   }
@@ -131,6 +135,14 @@ function getEnv(store, namespace, label, defaultValue) {
 }
 
 function getLabel(labels, label) {
+  switch(label) {
+    case 'positiveTags': {
+      return labels['positiveTagsLabel'] || labels['POSITIVE_TAGS_LABEL'] || 'POSITIVE_TAGS';
+    }
+    case 'negativeTags': {
+      return labels['negativeTagsLabel'] || labels['NEGATIVE_TAGS_LABEL'] || 'NEGATIVE_TAGS';
+    }
+  }
   return labels[label] || label;
 }
 

@@ -119,10 +119,10 @@ node index.js
 
 The `kwargs` composes of following fields:
 
-* `namespace` - a customized space name.
-* `POSITIVE_TAGS` - a customized positive tags environment variable name (default: `POSITIVE_TAGS`).
-* `NEGATIVE_TAGS` - a customized negative tags environment variable name (default: `NEGATIVE_TAGS`).
-* `version` - version of package.
+* `namespace` - a customized namespace.
+* `positiveTagsLabel` - a customized label for positive tags environment variable name (default: `POSITIVE_TAGS`).
+* `negativeTagsLabel` - a customized label for negative tags environment variable name (default: `NEGATIVE_TAGS`).
+* `version` - the current package version.
 
 This method returns the `codetags` instance itself.
 

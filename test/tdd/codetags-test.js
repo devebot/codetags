@@ -10,8 +10,8 @@ describe('codetags', function() {
     before(function() {
       codetags.reset().initialize({
         namespace: 'Devebot',
-        POSITIVE_TAGS: 'UPGRADE_ENABLED',
-        NEGATIVE_TAGS: 'UPGRADE_DISABLED',
+        positiveTagsLabel: 'UPGRADE_ENABLED',
+        negativeTagsLabel: 'UPGRADE_DISABLED',
       });
     })
     beforeEach(function() {
