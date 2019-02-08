@@ -229,7 +229,7 @@ const BRANCH_REF = {};
 
 const singleton = BRANCH_REF[DEFAULT_NAMESPACE] = new Codetags();
 
-singleton.createSpace = function(name, opts = {}) {
+singleton.newInstance = function(name, opts = {}) {
   if (!nodash.isString(name)) {
     throw new Error('name of a codetags space must be a string');
   }
@@ -241,8 +241,8 @@ singleton.createSpace = function(name, opts = {}) {
   return BRANCH_REF[name] = new Codetags(opts);
 }
 
-singleton.assertSpace = function(name, opts) {
-  return BRANCH_REF[name] = BRANCH_REF[name] || this.createSpace(name, opts);
+singleton.getInstance = function(name, opts) {
+  return BRANCH_REF[name] = BRANCH_REF[name] || this.newInstance(name, opts);
 }
 
 module.exports = singleton;

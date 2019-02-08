@@ -18,25 +18,25 @@ A default `codetags` instance can be retrieved simply by a `require` call:
 const codetags = require('codetags');
 ```
 
-We can create multiple `codetags's space` with `createSpace` or `assertSpace` methods. Call to both will create a codetags instance, but the `assertSpace` create a new instance only if it's existed before.
+We can create multiple `codetags's instance` with `newInstance` or `getInstance` methods. Call to both will create a codetags instance, but the `getInstance` create a new instance only if it has not existed before.
 
 ```javascript
 const codetags = require('codetags');
 
-const space1 = codetags.assertSpace('main', {
+const space1 = codetags.getInstance('main', {
   namespace: 'maincode'
 });
-const space2 = codetags.createSpace('test', {
+const space2 = codetags.newInstance('test', {
   namespace: 'testcode'
 });
 
 // ...
 
-const space3 = codetags.assertSpace('main', {
+const space3 = codetags.getInstance('main', {
   namespace: 'maincode'
 });
 console.log(space3 === space1); // true
-const space4 = codetags.createSpace('test', {
+const space4 = codetags.newInstance('test', {
   namespace: 'testcode'
 });
 console.log(space4 === space2); // false
@@ -243,9 +243,9 @@ Method `clearCache()` clears the cached values of tags filtering result as well 
 
 Method `reset()` invokes the method `clearCache()` as well as clears the values of `activeTags` collections that defined by `register()` method. This method also returns the `codetags` instance itself.
 
-### `.assertSpace(name, options)`
+### `.getInstance(name, options)`
 
-### `.createSpace(name, options)`
+### `.newInstance(name, options)`
 
 ## Examples
 
@@ -303,7 +303,7 @@ Create multiple `codetags` instances:
 const codetags = require('codetags');
 
 // features for trunk branch
-const trunk = codetags.createSpace('trunk', {
+const trunk = codetags.newInstance('trunk', {
   namespace: 'my_mission'
 });
 
@@ -319,7 +319,7 @@ trunk.register([
 ]);
 
 // features for trial branch
-const trial = codetags.createSpace('trial', {
+const trial = codetags.newInstance('trial', {
   namespace: 'my_passion'
 });
 
@@ -332,8 +332,8 @@ Make conditional flow:
 // file: index.js
 require('./bootstrap.js');
 const codetags = require('codetags');
-const trunk = codetags.assertSpace('trunk');
-const tryit = codetags.assertSpace('trial');
+const trunk = codetags.getInstance('trunk');
+const tryit = codetags.getInstance('trial');
 
 // ...
 
