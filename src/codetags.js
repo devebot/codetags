@@ -12,8 +12,8 @@ function Codetags(args) {
   this.initialize = function(cfg = {}) {
     [
       'namespace',
-      'positiveTagsLabel', 'POSITIVE_TAGS_LABEL', 'POSITIVE_TAGS',
-      'negativeTagsLabel', 'NEGATIVE_TAGS_LABEL', 'NEGATIVE_TAGS',
+      'positiveTagsLabel', 'POSITIVE_TAGS',
+      'negativeTagsLabel', 'NEGATIVE_TAGS',
     ].forEach(function(attr) {
       if (nodash.isString(cfg[attr])) {
         presets[attr] = nodash.labelify(cfg[attr]);
@@ -28,11 +28,10 @@ function Codetags(args) {
   }
 
   this.isActive = function() {
-    if (!store.positiveTags) {
-      store.positiveTags = getEnv(store, presets.namespace, getLabel(presets, 'positiveTags'));
-    }
-    if (!store.negativeTags) {
-      store.negativeTags = getEnv(store, presets.namespace, getLabel(presets, 'negativeTags'));
+    for(const field of ['positiveTags', 'negativeTags']) {
+      if (!store[field]) {
+        store[field] = getEnv(store, getLabel(presets, field));
+      }
     }
     return isArgumentsSatisfied(store, arguments);
   }
@@ -126,34 +125,29 @@ function isVersionLT(version1, version2) {
   return semver.lt(version1, version2);
 }
 
-function getEnv(store, namespace, label, defaultValue) {
+function getEnv(store, label, defaultValue) {
   if (label in store.env) return store.env[label];
   if (!nodash.isString(label)) return undefined;
-  store.env[label] = getValue(namespace, label) || defaultValue;;
+  store.env[label] = getValue(label) || defaultValue;;
   store.env[label] = nodash.stringToArray(store.env[label]);
   return store.env[label];
 }
 
-function getLabel(labels, label) {
+function getLabel(presets, label) {
+  const prefix = (presets['namespace'] || DEFAULT_NAMESPACE) + '_';
   switch(label) {
     case 'positiveTags': {
-      return labels['positiveTagsLabel'] || labels['POSITIVE_TAGS_LABEL'] || 'POSITIVE_TAGS';
+      return prefix + (presets['positiveTagsLabel'] || 'POSITIVE_TAGS');
     }
     case 'negativeTags': {
-      return labels['negativeTagsLabel'] || labels['NEGATIVE_TAGS_LABEL'] || 'NEGATIVE_TAGS';
+      return prefix + (presets['negativeTagsLabel'] || 'NEGATIVE_TAGS');
     }
   }
-  return labels[label] || label;
+  return prefix + (presets[label] || nodash.labelify(label));
 }
 
-function getValue(namespace, name) {
-  if (namespace) {
-    const longname = namespace + '_' + name;
-    if (longname in process.env) {
-      return process.env[longname];
-    }
-  }
-  return process.env[DEFAULT_NAMESPACE + '_' + name];
+function getValue(name) {
+  return process.env[name];
 }
 
 function isArgumentsSatisfied(store, tuples) {
