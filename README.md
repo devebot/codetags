@@ -18,7 +18,7 @@ A default `codetags` instance can be retrieved simply by a `require` call:
 const codetags = require('codetags');
 ```
 
-We can create multiple `codetags's instance` with `newInstance` or `getInstance` methods. Call to both will create a codetags instance, but the `getInstance` create a new instance only if it has not existed before.
+We can create multiple `codetags's instance` with `newInstance` or `getInstance` methods. Call to both will create a codetags instance, but the `getInstance` creates a new instance only if it has not existed before.
 
 ```javascript
 const codetags = require('codetags');
@@ -128,7 +128,7 @@ This method returns the `codetags` instance itself.
 
 ### `.register(descriptors)`
 
-Method `register()` is used to define the default `activeTags` collection.
+Method `register()` is used to define the default `declaredTags` collection.
 
 The argument `descriptors` is an array of `descriptor` objects which of each describing a string label together with the range of versions that will be applied.
 
@@ -167,7 +167,7 @@ This method returns the `codetags` instance itself.
 
 ### `.isActive(tagexps)`
 
-Method `isActive()` evaluates tags filter expressions (named `tagexp`) based on three collections of tags (`activeTags`, `positiveTags`, `negativeTags`) to determine whether it is accepted or denied. An expression of tags is composed by string labels, arrays, hashmaps and conditional operators (`$all`, `$any`, `$not`).
+Method `isActive()` evaluates tags filter expressions (named `tagexp`) based on three collections of tags (`declaredTags`, `positiveTags`, `negativeTags`) to determine whether it is accepted or denied. An expression of tags is composed by string labels, arrays, hashmaps and conditional operators (`$all`, `$any`, `$not`).
 
 #### `tagexp` is a single string
 
@@ -183,7 +183,7 @@ if (codetags.isActive(tagexp)) {
 Function call `codetags.isActive(tagexp)` returns `true` when:
 
 * `negativeTags` does not contain `tagexp-is-a-string`;
-* at least one of `positiveTags` and `defaultTags` contains `tagexp-is-a-string`.
+* at least one of `positiveTags` and `declaredTags` contains `tagexp-is-a-string`.
 
 #### `tagexp` is an array of sub-tagexps
 
@@ -233,7 +233,11 @@ Syntax:
 codetags.isActive(tagexp1, tagexp2, tagexp3);
 ```
 
-The above function call will return `true` if there is at least one of arguments satisfies the function `codetags.isActive`.
+The above function call will return `true` if there is at least one of `tagexp` arguments satisfies the function `codetags.isActive`. It is equivalent to the following expression:
+
+```javascript
+codetags.isActive(tagexp1) || codetags.isActive(tagexp2) || codetags.isActive(tagexp3) 
+```
 
 ### `.clearCache()`
 
@@ -241,11 +245,20 @@ Method `clearCache()` clears the cached values of tags filtering result as well 
 
 ### `.reset()`
 
-Method `reset()` invokes the method `clearCache()` as well as clears the values of `activeTags` collections that defined by `register()` method. This method also returns the `codetags` instance itself.
+Method `reset()` invokes the method `clearCache()` as well as clears the values of `declaredTags` collections that defined by `register()` method. This method also returns the `codetags` instance itself.
 
-### `.getInstance(name, options)`
+### `.newInstance(name, opts)`
 
-### `.newInstance(name, options)`
+Method `newInstance()` creates a new instance in each time it is called and assigns `name` to this instance. The `name` value is associated with the latest instance. If you want to retrieve the already created instance, using `getInstance` instead. The arguments can be:
+
+* `name`: a string as name (using in `getInstance()` to retrieve the instance);
+* `opts`: an option object that is similar to which in `initialize()`;
+
+This method returns the created instance.
+
+### `.getInstance(name, opts)`
+
+Method `getInstance()` returns the instance associated to `name` or creates a new instance when it has not existed before. Its arguments are the same with the method `newInstance()`.
 
 ## Examples
 

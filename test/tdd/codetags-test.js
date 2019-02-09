@@ -92,6 +92,51 @@ describe('codetags', function() {
     });
   });
 
+  describe('getInstance()', function() {
+    it('should return the default instance', function() {
+      assert.equal(codetags, codetags.getInstance('codetags'));
+      assert.equal(codetags, codetags.getInstance('CodeTags'));
+    });
+    it('should create an unexisted instance', function() {
+      const mytags = codetags.getInstance('unexisted');
+      assert.isObject(mytags);
+      assert.notEqual(codetags, mytags);
+    });
+    it('should throw an error if provided name is not a string', function() {
+      assert.throws(function() {
+        codetags.getInstance();
+      }, 'name of a codetags instance must be a string');
+      assert.throws(function() {
+        codetags.getInstance(1024);
+      }, 'name of a codetags instance must be a string');
+    });
+  });
+
+  describe('newInstance()', function() {
+    it('should throw an error if provided name is not a string', function() {
+      assert.throws(function() {
+        codetags.newInstance();
+      }, 'name of a codetags instance must be a string');
+      assert.throws(function() {
+        codetags.newInstance(1024);
+      }, 'name of a codetags instance must be a string');
+    });
+    it('should throw an error if provided name is equal to default name', function() {
+      assert.throws(function() {
+        codetags.newInstance('codetags');
+      }, 'CODETAGS is default instance name. Please provides another name.');
+    });
+    it('should create and return a new instance', function() {
+      const codetags1 = codetags.newInstance('example');
+      const codetags2 = codetags.newInstance('example');
+      const codetags3 = codetags.getInstance('example');
+      assert.notEqual(codetags, codetags1);
+      assert.notEqual(codetags, codetags2);
+      assert.notEqual(codetags1, codetags2);
+      assert.equal(codetags2, codetags3);
+    });
+  });
+
   after(function() {
     envmask.reset();
     codetags.reset();

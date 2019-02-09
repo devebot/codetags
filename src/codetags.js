@@ -6,7 +6,7 @@ const nodash = require('./nodash');
 const DEFAULT_NAMESPACE = 'CODETAGS';
 
 function Codetags(args) {
-  const store = { env: {}, activeTags: [], cachedTags: {} };
+  const store = { env: {}, declaredTags: [], cachedTags: {} };
   const presets = {};
 
   this.initialize = function(cfg = {}) {
@@ -55,7 +55,7 @@ function Codetags(args) {
 
   this.reset = function() {
     this.clearCache();
-    store.activeTags.length = 0;
+    store.declaredTags.length = 0;
     for(const attr in presets) {
       delete presets[attr];
     }
@@ -105,12 +105,12 @@ function addDescriptors(presets, store, descriptors) {
         return def.tag || def.name || def.label;
       });
     tags.forEach(function(tag) {
-      if (store.activeTags.indexOf(tag) < 0) {
-        store.activeTags.push(tag);
+      if (store.declaredTags.indexOf(tag) < 0) {
+        store.declaredTags.push(tag);
       }
     });
   }
-  return store.activeTags;
+  return store.declaredTags;
 }
 
 function isVersionValid(version) {
@@ -221,7 +221,7 @@ function checkLabelActivated(store, label) {
 
 function forceCheckLabelActivated(store, label) {
   if (store.negativeTags.indexOf(label) >= 0) return false;
-  if (store.activeTags.indexOf(label) >= 0) return true;
+  if (store.declaredTags.indexOf(label) >= 0) return true;
   return (store.positiveTags.indexOf(label) >= 0);
 }
 
@@ -230,19 +230,30 @@ const BRANCH_REF = {};
 const singleton = BRANCH_REF[DEFAULT_NAMESPACE] = new Codetags();
 
 singleton.newInstance = function(name, opts = {}) {
-  if (!nodash.isString(name)) {
-    throw new Error('name of a codetags space must be a string');
-  }
   name = nodash.labelify(name);
+  if (!nodash.isString(name)) {
+    throw new Error('name of a codetags instance must be a string');
+  }
   if (name === DEFAULT_NAMESPACE) {
-    throw new Error(DEFAULT_NAMESPACE + ' is default space name. Please provides another name.');
+    throw new Error([
+      DEFAULT_NAMESPACE + ' is default instance name.',
+      'Please provides another name.'
+    ].join(' '));
   }
   opts.namespace = opts.namespace || name;
   return BRANCH_REF[name] = new Codetags(opts);
 }
 
 singleton.getInstance = function(name, opts) {
-  return BRANCH_REF[name] = BRANCH_REF[name] || this.newInstance(name, opts);
+  name = nodash.labelify(name);
+  if (nodash.isObject(BRANCH_REF[name])) {
+    if (nodash.isObject(opts)) {
+      BRANCH_REF[name].initialize(opts);
+    }
+  } else {
+    BRANCH_REF[name] = this.newInstance(name, opts);
+  }
+  return BRANCH_REF[name];
 }
 
 module.exports = singleton;
