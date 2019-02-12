@@ -1,6 +1,6 @@
 {
   "name": "codetags",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A simple feature toggle utility",
   "main": "index.js",
   "directories": {

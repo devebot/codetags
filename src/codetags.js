@@ -24,15 +24,11 @@ function Codetags(args) {
         presets[attr] = cfg[attr];
       }
     });
+    refreshEnv(presets, store);
     return this;
   }
 
   this.isActive = function() {
-    for(const field of ['positiveTags', 'negativeTags']) {
-      if (!store[field]) {
-        store[field] = getEnv(store, getLabel(presets, field));
-      }
-    }
     return isArgumentsSatisfied(store, arguments);
   }
 
@@ -45,11 +41,7 @@ function Codetags(args) {
     for(const tagName in store.cachedTags) {
       delete store.cachedTags[tagName];
     }
-    store.negativeTags = null;
-    store.positiveTags = null;
-    for(const envName in store.env) {
-      delete store.env[envName];
-    }
+    refreshEnv(presets, store);
     return this;
   }
 
@@ -125,10 +117,19 @@ function isVersionLT(version1, version2) {
   return semver.lt(version1, version2);
 }
 
+function refreshEnv(presets, store) {
+  for(const envName in store.env) {
+    delete store.env[envName];
+  }
+  for(const field of ['positiveTags', 'negativeTags']) {
+    store[field] = getEnv(store, getLabel(presets, field));
+  }
+}
+
 function getEnv(store, label, defaultValue) {
   if (label in store.env) return store.env[label];
   if (!nodash.isString(label)) return undefined;
-  store.env[label] = getValue(label) || defaultValue;;
+  store.env[label] = getValue(label) || defaultValue;
   store.env[label] = nodash.stringToArray(store.env[label]);
   return store.env[label];
 }
@@ -225,9 +226,9 @@ function forceCheckLabelActivated(store, label) {
   return (store.positiveTags.indexOf(label) >= 0);
 }
 
-const BRANCH_REF = {};
+const INSTANCES = {};
 
-const singleton = BRANCH_REF[DEFAULT_NAMESPACE] = new Codetags();
+const singleton = INSTANCES[DEFAULT_NAMESPACE] = new Codetags();
 
 singleton.newInstance = function(name, opts = {}) {
   name = nodash.labelify(name);
@@ -241,19 +242,19 @@ singleton.newInstance = function(name, opts = {}) {
     ].join(' '));
   }
   opts.namespace = opts.namespace || name;
-  return BRANCH_REF[name] = new Codetags(opts);
+  return INSTANCES[name] = new Codetags(opts);
 }
 
 singleton.getInstance = function(name, opts) {
   name = nodash.labelify(name);
-  if (nodash.isObject(BRANCH_REF[name])) {
+  if (nodash.isObject(INSTANCES[name])) {
     if (nodash.isObject(opts)) {
-      BRANCH_REF[name].initialize(opts);
+      INSTANCES[name].initialize(opts);
     }
+    return INSTANCES[name];
   } else {
-    BRANCH_REF[name] = this.newInstance(name, opts);
+    return this.newInstance(name, opts);
   }
-  return BRANCH_REF[name];
 }
 
 module.exports = singleton;
