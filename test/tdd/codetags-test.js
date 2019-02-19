@@ -55,6 +55,11 @@ describe('codetags', function() {
       })
       codetags.clearCache();
     })
+    it('extracts declaredTags, includedTags, excludedTags collections properly', function() {
+      assert.sameMembers(codetags.getDeclaredTags(), ["tag-1", "tag-2"]);
+      assert.sameMembers(codetags.getIncludedTags(), ["abc", "def", "xyz", "tag-4"]);
+      assert.sameMembers(codetags.getExcludedTags(), ["disabled", "tag-2"]);
+    })
     it('An arguments-list presents the OR conditional operator', function() {
       assert.isTrue(codetags.isActive('abc'));
       assert.isTrue(codetags.isActive('abc', 'xyz'));

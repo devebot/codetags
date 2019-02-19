@@ -50,7 +50,26 @@ function Codetags(args) {
     return this;
   }
 
+  this.getDeclaredTags = function () {
+    return cloneTags(store, 'declaredTags');
+  }
+
+  this.getIncludedTags = function () {
+    return cloneTags(store, 'includedTags');
+  }
+
+  this.getExcludedTags = function () {
+    return cloneTags(store, 'excludedTags');
+  }
+
   this.initialize(args);
+}
+
+function cloneTags(store, collectionType) {
+  if (nodash.isArray(store[collectionType])) {
+    return store[collectionType].slice(0);
+  }
+  return null;
 }
 
 function addDescriptors(presets, store, descriptors) {
