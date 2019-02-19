@@ -10,11 +10,7 @@ function Codetags(args) {
   const presets = {};
 
   this.initialize = function(cfg = {}) {
-    [
-      'namespace',
-      'positiveTagsLabel', 'POSITIVE_TAGS',
-      'negativeTagsLabel', 'NEGATIVE_TAGS',
-    ].forEach(function(attr) {
+    ['namespace', 'INCLUDED_TAGS', 'EXCLUDED_TAGS'].forEach(function(attr) {
       if (nodash.isString(cfg[attr])) {
         presets[attr] = nodash.labelify(cfg[attr]);
       }
@@ -121,7 +117,7 @@ function refreshEnv(presets, store) {
   for(const envName in store.env) {
     delete store.env[envName];
   }
-  for(const field of ['positiveTags', 'negativeTags']) {
+  for(const field of ['includedTags', 'excludedTags']) {
     store[field] = getEnv(store, getLabel(presets, field));
   }
 }
@@ -135,16 +131,20 @@ function getEnv(store, label, defaultValue) {
 }
 
 function getLabel(presets, label) {
-  const prefix = (presets['namespace'] || DEFAULT_NAMESPACE) + '_';
-  switch(label) {
-    case 'positiveTags': {
-      return prefix + (presets['positiveTagsLabel'] || 'POSITIVE_TAGS');
+  const prefix = (presets['namespace'] || DEFAULT_NAMESPACE);
+  if (label === 'namespace') {
+    return prefix;
+  } else {
+    switch(label) {
+      case 'includedTags': {
+        return prefix + '_' + (presets['INCLUDED_TAGS'] || 'INCLUDED_TAGS');
+      }
+      case 'excludedTags': {
+        return prefix + '_' + (presets['EXCLUDED_TAGS'] || 'EXCLUDED_TAGS');
+      }
     }
-    case 'negativeTags': {
-      return prefix + (presets['negativeTagsLabel'] || 'NEGATIVE_TAGS');
-    }
+    return prefix + '_' + (presets[label] || nodash.labelify(label));
   }
-  return prefix + (presets[label] || nodash.labelify(label));
 }
 
 function getValue(name) {
@@ -221,9 +221,9 @@ function checkLabelActivated(store, label) {
 }
 
 function forceCheckLabelActivated(store, label) {
-  if (store.negativeTags.indexOf(label) >= 0) return false;
+  if (store.excludedTags.indexOf(label) >= 0) return false;
   if (store.declaredTags.indexOf(label) >= 0) return true;
-  return (store.positiveTags.indexOf(label) >= 0);
+  return (store.includedTags.indexOf(label) >= 0);
 }
 
 const INSTANCES = {};

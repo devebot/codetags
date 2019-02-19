@@ -10,8 +10,8 @@ describe('codetags', function() {
     before(function() {
       codetags.reset().initialize({
         namespace: 'Devebot',
-        positiveTagsLabel: 'UPGRADE_ENABLED',
-        negativeTagsLabel: 'UPGRADE_DISABLED',
+        INCLUDED_TAGS: 'UPGRADE_ENABLED',
+        EXCLUDED_TAGS: 'UPGRADE_DISABLED',
       });
     })
     beforeEach(function() {
@@ -50,8 +50,8 @@ describe('codetags', function() {
     })
     beforeEach(function() {
       envmask.setup({
-        CODETAGS_POSITIVE_TAGS: "abc, def, xyz, tag-4",
-        CODETAGS_NEGATIVE_TAGS: "disabled, tag-2",
+        CODETAGS_INCLUDED_TAGS: "abc, def, xyz, tag-4",
+        CODETAGS_EXCLUDED_TAGS: "disabled, tag-2",
       })
       codetags.clearCache();
     })

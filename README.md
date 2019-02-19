@@ -103,8 +103,8 @@ if (tryit.isActive(['foo', 'bar'])) {
 Declare environment variables:
 
 ```shell
-export CODETAGS_POSITIVE_TAGS=nil,foo
-export CODETAGS_NEGATIVE_TAGS=bar
+export CODETAGS_INCLUDED_TAGS=nil,foo
+export CODETAGS_EXCLUDED_TAGS=bar
 ```
 
 Start node program:
@@ -120,8 +120,8 @@ node index.js
 The `kwargs` composes of following fields:
 
 * `namespace` - a customized namespace.
-* `positiveTagsLabel` - a customized label for positive tags environment variable name (default: `POSITIVE_TAGS`).
-* `negativeTagsLabel` - a customized label for negative tags environment variable name (default: `NEGATIVE_TAGS`).
+* `INCLUDED_TAGS` - a customized label for included tags environment variable name (default: `INCLUDED_TAGS`).
+* `EXCLUDED_TAGS` - a customized label for excluded tags environment variable name (default: `EXCLUDED_TAGS`).
 * `version` - the current package version.
 
 This method returns the `codetags` instance itself.
@@ -167,7 +167,7 @@ This method returns the `codetags` instance itself.
 
 ### `.isActive(tagexps)`
 
-Method `isActive()` evaluates tags filter expressions (named `tagexp`) based on three collections of tags (`declaredTags`, `positiveTags`, `negativeTags`) to determine whether it is accepted or denied. An expression of tags is composed by string labels, arrays, hashmaps and conditional operators (`$all`, `$any`, `$not`).
+Method `isActive()` evaluates tags filter expressions (named `tagexp`) based on three collections of tags (`declaredTags`, `includedTags`, `excludedTags`) to determine whether it is accepted or denied. An expression of tags is composed by string labels, arrays, hashmaps and conditional operators (`$all`, `$any`, `$not`).
 
 #### `tagexp` is a single string
 
@@ -182,8 +182,8 @@ if (codetags.isActive(tagexp)) {
 
 Function call `codetags.isActive(tagexp)` returns `true` when:
 
-* `negativeTags` does not contain `tagexp-is-a-string`;
-* at least one of `positiveTags` and `declaredTags` contains `tagexp-is-a-string`.
+* `excludedTags` does not contain `tagexp-is-a-string`;
+* at least one of `includedTags` and `declaredTags` contains `tagexp-is-a-string`.
 
 #### `tagexp` is an array of sub-tagexps
 
@@ -245,7 +245,7 @@ Method `clearCache()` clears the cached values of tags filtering result as well 
 
 ### `.reset()`
 
-Method `reset()` invokes the method `clearCache()` as well as clears the values of `declaredTags` collections that defined by `register()` method. This method also returns the `codetags` instance itself.
+Method `reset()` invokes the method `clearCache()` as well as clears the values of `declaredTags` collection that has been defined by `register()` method. This method also returns the `codetags` instance itself.
 
 ### `.newInstance(name, opts)`
 
@@ -258,7 +258,7 @@ This method returns the created instance.
 
 ### `.getInstance(name, opts)`
 
-Method `getInstance()` returns the instance associated to `name` or creates a new instance when it has not existed before. Its arguments are the same with the method `newInstance()`.
+Method `getInstance()` returns the instance associated to `name` or creates a new instance when it has not existed before. Its arguments are the same as the method `newInstance()`.
 
 ## Examples
 
@@ -302,8 +302,8 @@ if (codetags.isActive('replace-console-log-with-winston')) {
 Change state of tags with environment variables:
 
 ```shell
-export CODETAGS_POSITIVE_TAGS=replace-console-log-with-winston
-export CODETAGS_NEGATIVE_TAGS=moving-from-mongodb-to-couchbase
+export CODETAGS_INCLUDED_TAGS=replace-console-log-with-winston
+export CODETAGS_EXCLUDED_TAGS=moving-from-mongodb-to-couchbase
 node index.js
 ```
 
@@ -375,8 +375,8 @@ if (tryit.isActive('foo', 'bar')) {
 Change state of tags with environment variables:
 
 ```shell
-export MY_MISSION_POSITIVE_TAGS=replace-console-log-with-winston
-export MY_PASSION_NEGATIVE_TAGS=foo,bar
+export MY_MISSION_INCLUDED_TAGS=replace-console-log-with-winston
+export MY_PASSION_EXCLUDED_TAGS=foo,bar
 node index.js
 ```
 
