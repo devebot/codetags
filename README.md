@@ -10,6 +10,15 @@
 
 ![Architecture](https://raw.github.com/devebot/codetags/master/docs/assets/images/codetags-architecture.png)
 
+
+### Installation
+
+Via `npm`:
+
+```shell
+npm install --save codetags
+```
+
 ### Retrieving a `codetags` instance
 
 A default `codetags` instance can be retrieved simply by a `require` call:
@@ -309,7 +318,7 @@ node index.js
 
 ### Multiple instances
 
-Create multiple `codetags` instances:
+Creates and declares default tags for multiple `codetags` instances:
 
 ```javascript
 // file: bootstrap.js
@@ -339,7 +348,7 @@ const trial = codetags.newInstance('trial', {
 trial.register(['foo', 'bar']);
 ```
 
-Make conditional flow:
+Uses declared tags in conditional flows:
 
 ```javascript
 // file: index.js
@@ -372,7 +381,7 @@ if (tryit.isActive('foo', 'bar')) {
 }
 ```
 
-Change state of tags with environment variables:
+Selects or excluded the tags with environment variables:
 
 ```shell
 export MY_MISSION_INCLUDED_TAGS=replace-console-log-with-winston
